@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Http.HttpResults;
 using CardType = eShop.Ordering.API.Application.Queries.CardType;
 using Order = eShop.Ordering.API.Application.Queries.Order;
 
@@ -131,8 +131,14 @@ public static class OrdersApi
 
         if (requestId == Guid.Empty)
         {
-            services.Logger.LogWarning("Invalid IntegrationEvent - RequestId is missing - {@IntegrationEvent}", request);
+            services.Logger.LogWarning("Create order rejected - RequestId is missing");
             return TypedResults.BadRequest("RequestId is missing.");
+        }
+
+        if (string.IsNullOrWhiteSpace(request.CardNumber) || request.CardNumber.Length < 4)
+        {
+            services.Logger.LogWarning("Create order rejected - invalid card number - RequestId: {RequestId}", requestId);
+            return TypedResults.BadRequest("Card number must contain at least four characters.");
         }
 
         using (services.Logger.BeginScope(new List<KeyValuePair<string, object>> { new("IdentifiedCommandId", requestId) }))
@@ -146,11 +152,10 @@ public static class OrdersApi
             var requestCreateOrder = new IdentifiedCommand<CreateOrderCommand, bool>(createOrderCommand, requestId);
 
             services.Logger.LogInformation(
-                "Sending command: {CommandName} - {IdProperty}: {CommandId} ({@Command})",
+                "Sending command: {CommandName} - {IdProperty}: {CommandId}",
                 requestCreateOrder.GetGenericTypeName(),
                 nameof(requestCreateOrder.Id),
-                requestCreateOrder.Id,
-                requestCreateOrder);
+                requestCreateOrder.Id);
 
             var result = await services.Mediator.Send(requestCreateOrder);
 

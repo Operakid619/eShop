@@ -154,3 +154,8 @@ The sample catalog data is defined in [catalog.json](https://github.com/dotnet/e
 ## eShop on Azure
 
 For a version of this app configured for deployment on Azure, please view [the eShop on Azure](https://github.com/Azure-Samples/eShopOnAzure) repo.
+
+## Fork contributions
+
+This fork adds [checkout payment-data protection](docs/checkout-payment-data-protection.md),
+including safe failure handling and regression tests for structured logging.
