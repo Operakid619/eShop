@@ -1,4 +1,4 @@
-﻿namespace eShop.Ordering.API.Application.Behaviors;
+namespace eShop.Ordering.API.Application.Behaviors;
 
 using Microsoft.Extensions.Logging;
 
@@ -38,7 +38,7 @@ public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
                 await using var transaction = await _dbContext.BeginTransactionAsync();
                 using (_logger.BeginScope(new List<KeyValuePair<string, object>> { new("TransactionContext", transaction.TransactionId) }))
                 {
-                    _logger.LogInformation("Begin transaction {TransactionId} for {CommandName} ({@Command})", transaction.TransactionId, typeName, request);
+                    _logger.LogInformation("Begin transaction {TransactionId} for {CommandName}", transaction.TransactionId, typeName);
 
                     response = await next();
 
@@ -56,7 +56,7 @@ public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error Handling transaction for {CommandName} ({@Command})", typeName, request);
+            _logger.LogError(ex, "Error Handling transaction for {CommandName}", typeName);
 
             throw;
         }

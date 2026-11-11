@@ -1,4 +1,4 @@
-﻿namespace eShop.Ordering.API.Application.Commands;
+namespace eShop.Ordering.API.Application.Commands;
 
 using eShop.Ordering.Domain.AggregatesModel.OrderAggregate;
 
@@ -44,7 +44,7 @@ public class CreateOrderCommandHandler
             order.AddOrderItem(item.ProductId, item.ProductName, item.UnitPrice, item.Discount, item.PictureUrl, item.Units);
         }
 
-        _logger.LogInformation("Creating Order - Order: {@Order}", order);
+        _logger.LogInformation("Creating order for buyer {BuyerId}", message.UserId);
 
         _orderRepository.Add(order);
 
